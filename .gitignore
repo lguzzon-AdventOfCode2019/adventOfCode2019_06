@@ -1,0 +1,16 @@
+*
+!**\.gitattributes
+!**\.gitignore
+!**\.md
+
+!/\.editorconfig
+!/\.travis\.yml
+!/config\.nims
+!/LICENSE
+!/scripts/
+!/tests/
+!/input
+
+!/adventOfCode2019_06\.nim
+!/adventOfCode2019_06\.nimble
+!/adventOfCode2019_06/
