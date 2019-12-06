@@ -3,19 +3,14 @@ import strutils
 import sequtils
 import tables
 
-const gcMapOrbits = "input".readFile.split('\n').mapIt(it.split(')'))
+const gcMapOrbits = "input".readFile.split('\n').filterIt("" != it).mapIt(
+        it.split(')'))
 
 type
     Planet = object
         parent: string
         child: seq[string]
         parentCount: int
-
-func getParentCount(aPlanet: var Planet, aPlanets: Table[string, Planet]): int =
-    result = aPlanet.parentCount
-    if (0 == result) and ("" != aPlanet.parent):
-        result = 1 + getParentCount(aPlanets[aPlanet.parent], aPlanets)
-        aPlanet.parentCount = result
 
 proc planets(aRelations: seq[seq[string]]): Table[string, Planet] =
     for relation in aRelations:
@@ -28,22 +23,28 @@ proc planets(aRelations: seq[seq[string]]): Table[string, Planet] =
         result[lPlanetID] = lPlanet
 
 
+func getParentCount(aPlanetId: string, aPlanets: var Table[string,
+        Planet]): int =
+    var lPlanet = aPlanets[aPlanetId]
+    result = lPlanet.parentCount
+    if (0 == result) and ("" != lPlanet.parent):
+        result = 1 + getParentCount(lPlanet.parent, aPlanets)
+        lPlanet.parentCount = result
+        aPlanets[aPlanetId] = lPlanet
+
 
 proc partOne =
-    echo $gcMapOrbits
+    # echo $gcMapOrbits
     var lCount = 0
     var lPlanets = planets(gcMapOrbits)
-    echo $lPlanets
-    for lPlanet in lPlanets.values:
-        lCount += getParentCount(lPlanet, lPlanets)
-    echo $lPlanets
-    echo $lCount
-
-    echo "partOne $1"%[$1]
+    # echo $lPlanets
+    for lPlanetId in lPlanets.keys:
+        lCount += getParentCount(lPlanetId, lPlanets)
+    # echo $lPlanets
+    echo "partOne $1"%[$lCount]
 
 proc partTwo =
     echo "partTwo $1"%[$2]
 
-# echo $loadWires()
-partOne() # ???
+partOne() # 142915
 partTwo() # ???
